@@ -1,0 +1,50 @@
+\chapter{PENDAHULUAN}
+\label{chap:pendahuluan}
+
+% Ubah bagian-bagian berikut dengan isi dari pendahuluan
+
+\section{Latar Belakang}
+\label{sec:latarbelakang}
+Dalam era globalisasi dan digitalisasi yang semakin pesat, pasar modal memiliki peran yang signifikan dalam perekonomian dunia. Pasar modal memungkinkan perusahaan untuk mendapatkan modal dengan cara menjual saham kepada investor, serta memberikan peluang bagi investor untuk meningkatkan nilai kekayaan mereka melalui investasi. Namun, salah satu tantangan terbesar dalam investasi di pasar modal adalah volatilitas harga yang sering kali sulit diprediksi karena dipengaruhi oleh banyak faktor, seperti berita ekonomi, kebijakan pemerintah, sentimen investor, dan kondisi pasar global\autocite{singh2020stock}.
+
+Pasar modal adalah salah satu komponen vital dalam perekonomian global, yang berfungsi sebagai tempat pertemuan antara pihak yang membutuhkan dana (emiten) dengan pihak yang memiliki dana (investor).\autocite{koller2014valuation} Fluktuasi harga saham, obligasi, dan instrumen investasi lainnya mencerminkan kondisi ekonomi suatu negara serta tingkat kepercayaan investor terhadap stabilitas ekonomi. Oleh karena itu, prediksi harga pasar modal menjadi hal yang sangat penting untuk meningkatkan efektivitas keputusan investasi dan strategi pengelolaan portofolio. Dalam konteks ini, prediksi yang akurat dapat memberikan keuntungan yang signifikan bagi investor serta membantu analisis kebijakan ekonomi di tingkat makro.
+
+Prediksi harga pasar modal tidaklah sederhana, mengingat banyaknya variabel yang mempengaruhi pergerakan harga, seperti faktor ekonomi, politik, sentimen pasar, dan peristiwa global lainnya\autocite{lahmiri2020forecasting}. Berbagai metode analisis telah digunakan untuk memodelkan dan memprediksi pergerakan harga pasar modal. Pendekatan tradisional, seperti analisis teknikal dan analisis fundamental, memang memiliki tempatnya masing-masing, tetapi sering kali terbatas pada kemampuan mereka dalam menangani data yang sangat dinamis dan memiliki ketergantungan waktu yang panjang.
+
+Prediksi harga pasar modal telah menjadi topik yang sangat menarik bagi para peneliti dan praktisi di bidang keuangan. Berbagai pendekatan telah digunakan dalam upaya untuk meningkatkan akurasi prediksi, mulai dari model statistik tradisional hingga metode yang lebih canggih berbasis pembelajaran mesin. Model pembelajaran mesin seperti Long Short-Term Memory (LSTM) dan Time Series Transformer (TST) telah terbukti efektif dalam menangkap pola-pola kompleks dalam data deret waktu dan digunakan secara luas dalam bidang keuangan untuk prediksi harga aset \autocite{brownlee2017deep}.
+
+LSTM, salah satu varian dari jaringan saraf berulang, terkenal karena kemampuannya untuk mengatasi masalah vanishing gradient dan mempertahankan informasi penting dalam jangka waktu yang panjang. Hal ini membuat LSTM sangat cocok untuk menangani data pasar modal yang bersifat serial \autocite{hochreiter1997long}. Di sisi lain, TST, sebagai varian dari model Transformer, menunjukkan potensi yang besar dalam memodelkan hubungan jangka panjang tanpa ketergantungan sekuensial. Keunggulan TST dalam menangkap korelasi jarak jauh memberikan harapan baru dalam meningkatkan akurasi prediksi harga pasar modal \autocite{vaswani2017attention}.
+
+Dengan memanfaatkan kelebihan dari kedua model ini, penelitian ini bertujuan untuk menguji performa TST dalam prediksi harga pasar modal. Penelitian ini diharapkan dapat memberikan kontribusi signifikan terhadap pengembangan model prediksi harga pasar modal, serta memberikan panduan yang lebih baik bagi investor dalam membuat keputusan investasi yang lebih tepat.
+\section{Rumusan Masalah}
+Pergerakan harga pasar modal yang dinamis memunculkan tantangan tersendiri dalam memprediksi harga di masa depan. Dalam konteks ini, muncul beberapa pertanyaan penting yang menjadi fokus penelitian. 
+\begin{itemize}
+     \item Bagaimana cara menerapkan model Time Series Transformer untuk memprediksi harga pasar modal khususnya forex ?
+     \item Apakah Time Series Transformer dapat mengidentifikasi pola - pola yang kompleks ?
+     \item Bagaimana tingkat akurasi model Time Series Transformer dalam memprediksi harga pasar modal berdasarkan data historis ?
+\end{itemize}
+
+\section{Batasan Masalah}
+
+\begin{itemize}
+    
+   \item Penelitian ini hanya menggunakan data harga pasar modal yang tersedia secara publik dalam bentuk data historis forex dengan jangka waktu yang tergolong pendek.
+
+    \item Fitur yang digunakan dalam model prediksi akan terbatas pada data harga historis (open, close, high, low). Variabel eksternal seperti sentimen pasar atau faktor ekonomi makro tidak akan dipertimbangkan dalam penelitian ini.
+
+   \item Aspek fundamental dan teknikal lainnya yang mempengaruhi pergerakan harga pasar modal tidak akan dianalisis secara mendalam dalam penelitian ini.
+
+\end{itemize}
+
+\section{Tujuan}
+ Penelitian ini memiliki beberapa tujuan utama, yaitu untuk mengembangkan model prediksi harga pasar modal menggunakan  Time Series Transformer (TST), serta Menganalisis kemampuan Time Series Transformer dalam menangani ketergantungan jangka panjang dan volatilitas harga pasar modal dibandingkan dengan pendekatan lainnya.
+
+\section{Manfaat}
+Penelitian ini diharapkan memberikan beberapa manfaat baik secara teoretis maupun prak-
+tis. Dari segi teoretis, penelitian ini dapat menambah wawasan dalam bidang kecerdasan bu-
+atan, khususnya dalam penerapan TST pada data deret waktu di pasar modal. Secara praktis,
+penelitian ini diharapkan dapat membantu pelaku pasar, investor, dan analis dalam membuat
+keputusan investasi yang lebih tepat dengan prediksi harga yang lebih akurat. Di sisi teknologi,
+penelitian ini berpotensi mendorong pengembangan lebih lanjut dalam aplikasi machine learn-
+ing dan jaringan saraf tiruan untuk berbagai kasus serupa di masa depan.
+
