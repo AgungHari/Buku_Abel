@@ -152,6 +152,7 @@ Feed Forward Network ini akan mengubah representasi yang dihasilkan oleh self-at
 \subsection{Residual \& Normalization}
 Residual Connection dan Layer Normalization adalah dua komponen penting yang membantu stabilitas pelatihan dan mempercepat konvergensi model. Kedua komponen ini bekerja untuk memastikan bahwa representasi data tidak hilang atau terdistorsi selama proses transformasi melalui berbagai layer.
 
+\newpage
 \subsubsection*{3.4.3.1 Residual Connection}
 Residual connection adalah teknik yang memungkinkan input awal suatu layer untuk langsung ditambahkan ke output layer tersebut, sebelum diteruskan ke proses berikutnya.Memungkinkan gradien untuk mengalir dengan lebih baik ke layer sebelumnya selama backpropagation, sehingga membantu pelatihan model yang lebih dalam.Model belajar lebih cepat karena input mentah tetap tersedia di setiap layer.Memastikan bahwa informasi penting dari input asli tidak hilang selama proses transformasi.Formula dari residual connection adalah: 
 
@@ -179,6 +180,7 @@ Normalization adalah teknik yang digunakan untuk meningkatkan kestabilan dan mem
 
 Layer Normalization menghitung rata-rata (\( u \)) dan standar deviasi ($\sigma$) dari fitur di dalam suatu lapisan dan kemudian menormalisasi output dari lapisan tersebut
 
+\newpage
 \subsection{Visualisasi Arsitektur Model TST}
 Untuk memberikan gambaran yang lebih jelas mengenai alur pemrosesan data pada model Transformer yang digunakan, berikut ditampilkan visualisasi arsitektur lengkap dari model Time Series Transformer (TST) yang telah dibangun. Visualisasi ini mencerminkan urutan layer dari input OHLC 12 timestep hingga output prediksi 5 timestep ke depan.
 
@@ -199,7 +201,7 @@ Dalam tugas akhir ini model TST yang telah dibangun sebelumnya akan dibandingkan
 Pada gambar \ref{fig:lstm1} merupakan arsitektur LSTM yang akan digunakan untuk membangun model pembanding. Visualisasi ini bertujuan untuk menampilkan input dan output dari arsitektur yang telah ditetapkan penulis pada model pembanding ini. Adapun dataset yang digunakan telah melalui proses yang serupa dengan model TST sehingga dapat digunakan untuk menjadi pembanding dari model TST yang akan digunakan.
 
 \begin{figure} [H] \centering
-    \includegraphics[scale=0.8]{gambar/lstmmodel1.png} 
+    \includegraphics[scale=0.65]{gambar/lstmmodel1.png} 
     \caption{Arsitektur LSTM Model 1}
     \label{fig:lstm1}
 \end{figure}
@@ -226,7 +228,7 @@ Model LSTM kedua memiliki arsitektur yang lebih kompleks dibandingkan model pert
 Visualisasi arsitektur model ditunjukkan pada Gambar \ref{fig:lstm2}. Sama seperti model sebelumnya, input yang digunakan adalah data OHLC selama 12 timestep dengan interval 5 menit. Model ini akan menghasilkan prediksi OHLC untuk 5 langkah waktu ke depan, atau setara dengan 25 menit prediksi.
 
 \begin{figure} [H] \centering
-    \includegraphics[scale=0.8]{gambar/lstmmodel2.png} 
+    \includegraphics[scale=0.65]{gambar/lstmmodel2.png} 
     \caption{Arsitektur LSTM Model 2}
     \label{fig:lstm2}
 \end{figure}
@@ -257,7 +259,7 @@ Model LSTM ketiga menggunakan pendekatan \textit{Bidirectional LSTM}, yaitu vari
 Model ini tetap menggunakan 12 timestep sebagai input, masing-masing berisi 4 fitur (OHLC), dan menghasilkan prediksi untuk 5 timestep ke depan. Visualisasi dari arsitektur model ditunjukkan pada Gambar \ref{fig:lstm3}.
 
 \begin{figure} [H] \centering
-    \includegraphics[scale=0.8]{gambar/lstmmodel3.png} 
+    \includegraphics[scale=0.65]{gambar/lstmmodel3.png} 
     \caption{Arsitektur LSTM Model 3 (Bidirectional)}
     \label{fig:lstm3}
 \end{figure}
@@ -355,7 +357,7 @@ Setelah model machine learning melakukan proses prediksi terhadap data uji, nila
 
 
 \subsection{Output}
-Output layer berfungsi untuk menghasilkan prediksi berdasarkan hasil yang diperoleh dari model setelah proses transformasi dilakukan. Output layer biasanya memiliki satu unit untuk setiap langkah waktu prediksi yang dihasilkan.Memprediksi harga untuk beberapa langkah ke depan, jumlah neuron di output layer akan sesuai dengan jumlah langkah yang diprediksi.Output layer sering kali menggunakan fungsi aktivasi linear (ReLU, atau tanpa fungsi aktivasi). Ini memungkinkan model untuk menghasilkan nilai kontinu yang sesuai dengan harga pasar modal. Dimensi output layer dapat disesuaikan dengan kebutuhan prediksi. Dalam kasus harga pasar modal, output layer akan mengeluarkan nilai yang menunjukkan harga pasar modal pada waktu tertentu.Dimensi output ini akan berupa Candle stick dengan panjang yang sesuai dengan jumlah langkah waktu yang akan diprediksi. Candle stick ini akan merepresentasikan harga Open, High, Low, dan Close untuk setiap langkah waktu yang diprediksi. Candle stick ini dibuat menggunakan mplfinance yang merupakan library untuk visualisasi data pasar modal.
+Output layer berfungsi untuk menghasilkan prediksi berdasarkan hasil yang diperoleh dari model setelah proses transformasi dilakukan. Output layer biasanya memiliki satu unit untuk setiap langkah waktu prediksi yang dihasilkan.Memprediksi harga untuk beberapa langkah ke depan, jumlah neuron di output layer akan sesuai dengan jumlah langkah yang diprediksi. Output layer sering kali menggunakan fungsi aktivasi linear (ReLU, atau tanpa fungsi aktivasi). Ini memungkinkan model untuk menghasilkan nilai kontinu yang sesuai dengan harga pasar modal. Dimensi output layer dapat disesuaikan dengan kebutuhan prediksi. Dalam kasus harga pasar modal, output layer akan mengeluarkan nilai yang menunjukkan harga pasar modal pada waktu tertentu.Dimensi output ini akan berupa Candle stick dengan panjang yang sesuai dengan jumlah langkah waktu yang akan diprediksi. Candle stick ini akan merepresentasikan harga Open, High, Low, dan Close untuk setiap langkah waktu yang diprediksi. Candle stick ini dibuat menggunakan \textit{mplfinance} yang merupakan library untuk visualisasi data pasar modal.
 
 \subsubsection*{3.5.5.1 Grafik Output}
 Setelah data melewati encoder dan decoder dan di normalisasi, output layer akan memberikan hasil prediksi berdasarkan informasi yang telah dipelajari oleh model.Untuk prediksi harga pasar modal, model akan menghasilkan harga yang diprediksi untuk langkah waktu tertentu ke depan berdasarkan pola yang telah dipelajari dari data historis.
