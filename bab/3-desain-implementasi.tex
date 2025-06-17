@@ -179,20 +179,111 @@ Normalization adalah teknik yang digunakan untuk meningkatkan kestabilan dan mem
 
 Layer Normalization menghitung rata-rata (\( u \)) dan standar deviasi ($\sigma$) dari fitur di dalam suatu lapisan dan kemudian menormalisasi output dari lapisan tersebut
 
+\subsection{Visualisasi Arsitektur Model TST}
+Untuk memberikan gambaran yang lebih jelas mengenai alur pemrosesan data pada model Transformer yang digunakan, berikut ditampilkan visualisasi arsitektur lengkap dari model Time Series Transformer (TST) yang telah dibangun. Visualisasi ini mencerminkan urutan layer dari input OHLC 12 timestep hingga output prediksi 5 timestep ke depan.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.65]{gambar/tstars.png} 
+    \caption{Arsitektur Model Time Series Transformer (TST)}
+    \label{fig:tst_architecture}
+\end{figure}
+
+Dari gambar di atas dapat dilihat bahwa input berupa sekuens data OHLC dengan panjang 12 timestep terlebih dahulu diproyeksikan ke dimensi baru, diberi positional encoding, dan kemudian diproses oleh encoder transformer. Hasilnya kemudian dirapikan melalui operasi \textit{transpose}, \textit{flatten}, dan \textit{dense}, sebelum akhirnya dibentuk ulang menjadi output prediksi OHLC untuk 5 timestep ke depan.
+
+
 \section{Model Pembanding}
 Dalam tugas akhir ini model TST yang telah dibangun sebelumnya akan dibandingkan dengan model dengan arsitektur LSTM pada subbab ini. Adapun model pembanding ini disesuaikan jumlah timestampnya untuk dibandingkan dengan model TST yang memiliki Timestamp yang serupa. Adapun ketiga jenis arsitektur modelnya yaitu sebagai berikut.
 
-\subsection{Arsitektur LSTM Model 1}
-Pada model pertama
+\subsection{Arsitektur LSTM Model Pertama}
+Pada gambar \ref{fig:lstm1} merupakan arsitektur LSTM yang akan digunakan untuk membangun model pembanding. Visualisasi ini bertujuan untuk menampilkan input dan output dari arsitektur yang telah ditetapkan penulis pada model pembanding ini. Adapun dataset yang digunakan telah melalui proses yang serupa dengan model TST sehingga dapat digunakan untuk menjadi pembanding dari model TST yang akan digunakan.
 
 \begin{figure} [H] \centering
-  % Nama dari file gambar yang diinputkan
     \includegraphics[scale=0.8]{gambar/lstmmodel1.png} 
-    \caption{Struktur Model LSTM Timestep 12}
+    \caption{Arsitektur LSTM Model 1}
     \label{fig:lstm1}
 \end{figure}
 
+Adapun penjelasan dari setiap lapisan model adalah sebagai berikut:
 
+\begin{itemize}
+    \item \textbf{LSTM Layer 1:} Lapisan LSTM pertama terdiri dari 64 unit dan menerima input dengan dimensi (12, 4). Layer ini memproses seluruh sekuens input dan mengembalikan keluaran untuk setiap timestep, yang membantu model memahami hubungan jangka pendek dan menengah antar titik data.
+    
+    \item \textbf{Dropout:} Setelah LSTM pertama, diterapkan dropout sebesar 20\% untuk mencegah model mengalami overfitting, terutama saat proses pelatihan.
+    
+    \item \textbf{LSTM Layer 2:} Lapisan LSTM kedua terdiri dari 32 unit dan hanya mengembalikan output dari timestep terakhir. Di sini, model menyimpulkan informasi penting dari keseluruhan input sebelumnya dalam satu vektor.
+    
+    \item \textbf{Dense Layer:} Lapisan Dense mengubah vektor hasil dari LSTM kedua menjadi vektor dengan panjang 20, yang mewakili 5 timestep ke depan dengan masing-masing 4 fitur (5 × 4 = 20).
+    
+    \item \textbf{Reshape Layer:} Vektor output dari Dense kemudian diubah menjadi bentuk matriks (5, 4), sehingga model dapat menghasilkan prediksi OHLC untuk lima waktu berikutnya.
+\end{itemize}
+
+Arsitektur ini digunakan sebagai baseline atau model dasar untuk membandingkan performanya dengan model Transformer yang telah dibahas pada bab sebelumnya. Struktur yang sederhana namun efektif ini akan membantu dalam mengevaluasi sejauh mana keunggulan pendekatan Transformer dalam memprediksi data deret waktu.
+
+\subsection{Arsitektur LSTM Model Kedua}
+Model LSTM kedua memiliki arsitektur yang lebih kompleks dibandingkan model pertama. Arsitektur ini menggunakan tiga lapisan LSTM yang disusun secara berurutan (stacked LSTM), dengan tujuan untuk memperdalam pemahaman model terhadap pola dalam data historis. Semakin banyak lapisan yang digunakan, maka semakin dalam model dapat menangkap pola jangka pendek maupun jangka panjang dalam data deret waktu.
+
+Visualisasi arsitektur model ditunjukkan pada Gambar \ref{fig:lstm2}. Sama seperti model sebelumnya, input yang digunakan adalah data OHLC selama 12 timestep dengan interval 5 menit. Model ini akan menghasilkan prediksi OHLC untuk 5 langkah waktu ke depan, atau setara dengan 25 menit prediksi.
+
+\begin{figure} [H] \centering
+    \includegraphics[scale=0.8]{gambar/lstmmodel2.png} 
+    \caption{Arsitektur LSTM Model 2}
+    \label{fig:lstm2}
+\end{figure}
+
+Berikut adalah penjelasan dari setiap lapisan model:
+
+\begin{itemize}
+    \item \textbf{LSTM Layer 1:} Lapisan pertama terdiri dari 128 unit LSTM. Layer ini menerima input berbentuk (12, 4), lalu mengembalikan output untuk setiap timestep (\textit{return\_sequences=True}) agar dapat diteruskan ke layer berikutnya.
+    
+    \item \textbf{Dropout:} Setelah LSTM pertama, digunakan dropout sebesar 30\% untuk mencegah overfitting.
+    
+    \item \textbf{LSTM Layer 2:} Lapisan kedua memiliki 64 unit LSTM dan juga mengembalikan urutan output (\textit{return\_sequences=True}). Penambahan layer ini membantu model menangkap pola yang lebih dalam dalam data.
+    
+    \item \textbf{Dropout:} Dropout kembali diterapkan dengan rasio 30\% sebagai upaya regularisasi.
+    
+    \item \textbf{LSTM Layer 3:} Lapisan terakhir terdiri dari 32 unit dan hanya mengembalikan hasil dari timestep terakhir (\textit{return\_sequences=False}). Layer ini menyaring dan merangkum semua informasi yang diperoleh dari dua lapisan sebelumnya.
+    
+    \item \textbf{Dense Layer:} Lapisan Dense mengubah hasil dari LSTM ketiga menjadi vektor berdimensi 20, yang merepresentasikan 5 timestep ke depan dengan masing-masing 4 fitur.
+    
+    \item \textbf{Reshape Layer:} Vektor output kemudian diubah menjadi matriks berukuran (5, 4), sesuai dengan struktur output prediksi OHLC.
+\end{itemize}
+
+Model kedua ini dirancang untuk menguji apakah penggunaan arsitektur LSTM bertingkat (stacked) dapat meningkatkan akurasi prediksi dibandingkan dengan model LSTM tunggal yang lebih sederhana. Kedalaman model memungkinkan pembelajaran representasi yang lebih kompleks, namun juga berisiko overfitting jika tidak diatur dengan baik.
+
+\subsection{Arsitektur LSTM Model 3}
+Model LSTM ketiga menggunakan pendekatan \textit{Bidirectional LSTM}, yaitu variasi dari LSTM yang mampu memproses data urutan dalam dua arah, yakni maju dan mundur. Pendekatan ini memungkinkan model memahami konteks secara lebih luas dari urutan data yang diberikan, sehingga diharapkan dapat meningkatkan kualitas prediksi.
+
+Model ini tetap menggunakan 12 timestep sebagai input, masing-masing berisi 4 fitur (OHLC), dan menghasilkan prediksi untuk 5 timestep ke depan. Visualisasi dari arsitektur model ditunjukkan pada Gambar \ref{fig:lstm3}.
+
+\begin{figure} [H] \centering
+    \includegraphics[scale=0.8]{gambar/lstmmodel3.png} 
+    \caption{Arsitektur LSTM Model 3 (Bidirectional)}
+    \label{fig:lstm3}
+\end{figure}
+
+Berikut adalah penjelasan dari setiap lapisan dalam model ini:
+
+\begin{itemize}
+    \item \textbf{Bidirectional LSTM:} Lapisan pertama adalah LSTM dengan 64 unit yang dibungkus oleh layer \textit{Bidirectional}. Artinya, model akan memproses data dari awal ke akhir (forward) dan dari akhir ke awal (backward) secara bersamaan. Output dari kedua arah akan digabung dan diteruskan ke layer berikutnya. Output dari layer ini memiliki bentuk sekuensial karena \textit{return\_sequences=True}.
+    
+    \item \textbf{Dropout:} Dropout sebesar 30\% digunakan setelah Bidirectional LSTM untuk mengurangi risiko overfitting.
+    
+    \item \textbf{LSTM Layer:} Lapisan LSTM biasa dengan 32 unit yang hanya mengembalikan hasil pada timestep terakhir. Layer ini bertugas merangkum informasi dari output sekuensial sebelumnya menjadi satu vektor representasi.
+    
+    \item \textbf{Dense Layer:} Layer Dense akan mengubah vektor hasil dari LSTM menjadi 20 unit output, mewakili 5 timestep dengan masing-masing 4 fitur.
+    
+    \item \textbf{Reshape Layer:} Output kemudian diubah menjadi bentuk (5, 4), sesuai dengan struktur prediksi OHLC yang diinginkan.
+\end{itemize}
+
+Model ini dirancang untuk menguji sejauh mana pendekatan dua arah (bidirectional) dapat memberikan hasil yang lebih baik dibandingkan LSTM biasa atau stacked LSTM. Dengan mempertimbangkan konteks dari dua arah, diharapkan model lebih peka terhadap pola-pola harga yang kompleks pada data deret waktu.
+
+
+% \begin{figure} [H] \centering
+%     \includegraphics[scale=0.8]{gambar/lstmmodel2.png} 
+%     \caption{Struktur Model LSTM Timestep 12 (Stacked LSTM)}
+%     \label{fig:lstm2}
+% \end{figure}
 % \subsection{Arsitektur LSTM Timestep 12}
 % Dapat dilihat dari gambar berikut ini merupakan arsitektur LSTM yang akan digunakan untuk membangun model pembanding. Visualisasi ini bertujuan untuk menampilkan input dan output dari arsitektur yang telah ditetapkan penulis pada model pembanding ini. Adapun dataset yang digunakan telah melalui proses yang serupa dengan model TST sehingga dapat digunakan untuk menjadi pembanding dari model TST yang akan digunakan. 
 % % \begin{figure} [H] \centering
@@ -252,43 +343,48 @@ Pada model pertama
 % Secara keseluruhan, arsitektur ini mengandalkan memori jangka panjang dan pendek dari LSTM untuk memahami pola pergerakan harga dalam waktu singkat, dan memberikan prediksi yang mencakup keempat komponen harga utama pada candle berikutnya.
 
 
-% \subsection{Inverse Scale}
-% Setelah model machine learning melakukan proses prediksi terhadap data uji, nilai hasil prediksi yang dihasilkan masih dalam skala hasil normalisasi (dalam hal ini menggunakan MinMaxScaler dengan rentang 0 hingga 1). Oleh karena itu, nilai tersebut perlu dikembalikan ke skala aslinya agar dapat dibandingkan secara langsung dengan data harga sebenarnya.
-% % \begin{figure} [H] \centering
-% %   % Nama dari file gambar yang diinputkan
-% %     \includegraphics[scale=1.0]{konten/inverse scaler.png} 
-% %     \caption{Inverse Scaler}
-% %     \label{fig:label_gambar}
-% % \end{figure}
+\subsection{Inverse Scale}
+Setelah model machine learning melakukan proses prediksi terhadap data uji, nilai hasil prediksi yang dihasilkan masih dalam skala hasil normalisasi (dalam hal ini menggunakan MinMaxScaler dengan rentang 0 hingga 1). Oleh karena itu, nilai tersebut perlu dikembalikan ke skala aslinya agar dapat dibandingkan secara langsung dengan data harga sebenarnya.
+
+\begin{figure} [H] \centering
+  % Nama dari file gambar yang diinputkan
+    \includegraphics[scale=1.0]{gambar/inverse scaler.png} 
+    \caption{Inverse Scaler}
+    \label{fig:InverseScaler}
+\end{figure}
 
 
-% \subsection{Output}
-% Output layer berfungsi untuk menghasilkan prediksi berdasarkan hasil yang diperoleh dari model setelah proses transformasi dilakukan. Output layer biasanya memiliki satu unit untuk setiap langkah waktu prediksi yang dihasilkan.Memprediksi harga untuk beberapa langkah ke depan, jumlah neuron di output layer akan sesuai dengan jumlah langkah yang diprediksi.Output layer sering kali menggunakan fungsi aktivasi linear (ReLU, atau tanpa fungsi aktivasi). Ini memungkinkan model untuk menghasilkan nilai kontinu yang sesuai dengan harga pasar modal. Dimensi output layer dapat disesuaikan dengan kebutuhan prediksi. Dalam kasus harga pasar modal, output layer akan mengeluarkan nilai yang menunjukkan harga pasar modal pada waktu tertentu.Dimensi output ini akan berupa Candle stick dengan panjang yang sesuai dengan jumlah langkah waktu yang akan diprediksi.
-% \subsubsection{Grafik Output}
-% Setelah data melewati encoder dan decoder dan di normalisasi, output layer akan memberikan hasil prediksi berdasarkan informasi yang telah dipelajari oleh model.Untuk prediksi harga pasar modal, model akan menghasilkan harga yang diprediksi untuk langkah waktu tertentu ke depan berdasarkan pola yang telah dipelajari dari data historis.
-% % \begin{figure} [H] \centering
-% %   % Nama dari file gambar yang diinputkan
-% %     \includegraphics[scale=0.7]{konten/outputlay.png} 
-% %     \caption{Output Layer}
-% %     \label{fig:label_gambar}
-% % \end{figure}
+\subsection{Output}
+Output layer berfungsi untuk menghasilkan prediksi berdasarkan hasil yang diperoleh dari model setelah proses transformasi dilakukan. Output layer biasanya memiliki satu unit untuk setiap langkah waktu prediksi yang dihasilkan.Memprediksi harga untuk beberapa langkah ke depan, jumlah neuron di output layer akan sesuai dengan jumlah langkah yang diprediksi.Output layer sering kali menggunakan fungsi aktivasi linear (ReLU, atau tanpa fungsi aktivasi). Ini memungkinkan model untuk menghasilkan nilai kontinu yang sesuai dengan harga pasar modal. Dimensi output layer dapat disesuaikan dengan kebutuhan prediksi. Dalam kasus harga pasar modal, output layer akan mengeluarkan nilai yang menunjukkan harga pasar modal pada waktu tertentu.Dimensi output ini akan berupa Candle stick dengan panjang yang sesuai dengan jumlah langkah waktu yang akan diprediksi. Candle stick ini akan merepresentasikan harga Open, High, Low, dan Close untuk setiap langkah waktu yang diprediksi. Candle stick ini dibuat menggunakan mplfinance yang merupakan library untuk visualisasi data pasar modal.
 
-% Gambar diatas merupakan output layer yang akan ditampilkan dari hasil prediksi. Setiap waktunya akan di tampilkan dengan sebuah candle stick.
+\subsubsection*{3.5.5.1 Grafik Output}
+Setelah data melewati encoder dan decoder dan di normalisasi, output layer akan memberikan hasil prediksi berdasarkan informasi yang telah dipelajari oleh model.Untuk prediksi harga pasar modal, model akan menghasilkan harga yang diprediksi untuk langkah waktu tertentu ke depan berdasarkan pola yang telah dipelajari dari data historis.
 
+\begin{figure} [H] \centering
+  % Nama dari file gambar yang diinputkan
+    \includegraphics[scale=0.6]{gambar/outputlay.png} 
+    \caption{Output Layer}
+    \label{fig:outputgraf}
+\end{figure}
 
+Gambar \ref{fig:outputgraf} merupakan output layer yang akan ditampilkan dari hasil prediksi. Setiap waktunya akan di tampilkan dengan sebuah candle stick.
 
 \subsection{Loss Function}
 Untuk mengevaluasi model yang telah dilatih time series transformer,akan digunakan Mean Squares Error(MSE). Dari hasil yang akan dikeluarkan MSE dapat terlihat hasil performa model Time Series Transformer dalam memprediksi harga pasar modal.
-\subsubsection{Mean Squared Error (MSE)}
+
+\subsubsection*{3.5.6.1 Mean Squared Error (MSE)}
 Mean Squared Error (MSE) adalah fungsi loss yang umum digunakan dalam masalah regresi, termasuk untuk model seperti Time Series Transformer yang memprediksi harga pasar modal. MSE mengukur seberapa besar perbedaan antara nilai yang diprediksi oleh model dan nilai aktual yang diamati. Semakin kecil nilai MSE, semakin baik model dalam memprediksi harga. MSE mempunyai formula sebagai berikut
-% \[
-% A = \sum_{i=1}^{n} \left( \frac{1}{2} x_i^2 + \sqrt{x_i + 1} \right)
-% \]
-% \begin{itemize}
-%     \item \( y_{\text{pred}}(i) \) adalah prediksi harga pasar modal pada data ke-i.
-%     \item \( y_{\text{true}}(i) \) adalah harga pasar modal yang sebenarnya pada data ke-i.
-%     \item \( n \) adalah jumlah data dalam batch.
-% \end{itemize}
-Dalam prediksi harga pasar modal, harga pasar modal akan bernilai kontinu. MSE cocok digunakan karena menghitung rata-rata kuadrat selisih antara prediksi dan nilai aktual.MSE memberikan penalti yang lebih besar untuk prediksi yang jauh dari nilai sebenarnya, sehingga model cenderung lebih berhati-hati dalam menghasilkan prediksi yang jauh dari harga sebenarnya.
+
+\[
+A = \sum_{i=1}^{n} \left( \frac{1}{2} x_i^2 + \sqrt{x_i + 1} \right)
+\]
+
+\begin{itemize}
+    \item \( y_{pred}(i) \) adalah prediksi harga pasar modal pada data ke-i.
+    \item \( y_{true}(i) \) adalah harga pasar modal yang sebenarnya pada data ke-i.
+    \item \( n \) adalah jumlah data dalam batch.
+\end{itemize}
+
+Dalam prediksi harga pasar modal, harga pasar modal akan bernilai kontinu. MSE cocok digunakan karena menghitung rata-rata kuadrat selisih antara prediksi dan nilai aktual. MSE memberikan penalti yang lebih besar untuk prediksi yang jauh dari nilai sebenarnya, sehingga model cenderung lebih berhati-hati dalam menghasilkan prediksi yang jauh dari harga sebenarnya.
 
 
